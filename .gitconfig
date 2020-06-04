@@ -1,0 +1,7 @@
+[user]
+	name = Alexey Reznikov
+	email = alexey@reznikov.eu
+[core]
+	eol = lf
+[commit]
+	gpgsign = true
