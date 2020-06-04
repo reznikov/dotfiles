@@ -5,3 +5,6 @@
 	eol = lf
 [commit]
 	gpgsign = true
+[alias]
+	st = status -s
+	ci = commit
