@@ -1,2 +1,2 @@
 alias ll="ls -l"
-alias weather="curl https://wttr.in/riga?FQ"
+alias weather="curl https://wttr.in/riga\?FQ"
