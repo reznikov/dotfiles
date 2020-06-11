@@ -1,8 +1,0 @@
-#!/bin/zsh
-
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-ln -s ${BASE_DIR}/gitconfig ~/.gitconfig
-
-ln -s ${BASE_DIR}/aliases ~/.aliases
-ln -s ${BASE_DIR}/zshrc ~/.zshrc

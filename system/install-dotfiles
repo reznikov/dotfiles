@@ -1,0 +1,11 @@
+#!/bin/zsh
+
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+rm ~/.gitconfig
+ln -s ${BASE_DIR}/git/gitconfig ~/.gitconfig
+
+rm ~/.aliases
+ln -s ${BASE_DIR}/shell/aliases ~/.aliases
+rm ~/.zshrc
+ln -s ${BASE_DIR}/shell/zshrc ~/.zshrc

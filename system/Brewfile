@@ -4,12 +4,18 @@ tap "homebrew/cask-drivers"
 tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "homebrew/services"
+tap "reznikov/cardo-unofficial"
+
 brew "git"
 brew "gnupg"
 brew "htop"
 brew "mas"
+brew "nmap"
 brew "node"
+
 cask "1password"
+cask "bartender"
+cask "cardo-update"
 cask "docker"
 cask "firefox-developer-edition"
 cask "gpg-suite"
@@ -19,15 +25,13 @@ cask "istat-menus"
 cask "iterm2"
 cask "little-snitch"
 cask "logitech-options"
+cask "notion"
 cask "pocket-casts"
 cask "protonmail-bridge"
 cask "protonvpn"
 cask "spotify"
 cask "telegram"
-cask "vanilla"
+cask "visual-studio-code"
+
 mas "feedly", id: 865500966
-mas "iMovie", id: 408981434
-mas "Keynote", id: 409183694
 mas "Magnet", id: 441258766
-mas "Numbers", id: 409203825
-mas "Pages", id: 409201541
