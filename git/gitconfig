@@ -8,3 +8,9 @@
 [alias]
 	st = status -s
 	ci = commit
+	graph = log --graph --decorate --stat --date=iso --all
+	overview = log --oneline --no-merges
+[log]
+	date = iso
+[github]
+	user = reznikov

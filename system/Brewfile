@@ -1,6 +1,7 @@
 tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/cask-drivers"
+tap "homebrew/cask-fonts"
 tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "homebrew/services"
@@ -12,12 +13,15 @@ brew "htop"
 brew "mas"
 brew "nmap"
 brew "node"
+brew "tldr"
+brew "wget"
 
 cask "1password"
 cask "bartender"
 cask "cardo-update"
 cask "docker"
 cask "firefox-developer-edition"
+cask "font-jetbrains-mono"
 cask "gpg-suite"
 cask "intel-power-gadget"
 cask "intellij-idea"
@@ -29,9 +33,13 @@ cask "notion"
 cask "pocket-casts"
 cask "protonmail-bridge"
 cask "protonvpn"
+cask "rocket"
 cask "spotify"
 cask "telegram"
 cask "visual-studio-code"
 
 mas "feedly", id: 865500966
+mas "Keynote", id: 409183694
 mas "Magnet", id: 441258766
+mas "Numbers", id: 409203825
+mas "Pages", id: 409201541
