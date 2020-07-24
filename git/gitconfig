@@ -3,6 +3,7 @@
 	email = alexey@reznikov.eu
 [core]
 	eol = lf
+	editor = code --wait
 [commit]
 	gpgsign = true
 [alias]
