@@ -6,4 +6,4 @@ alias cleardns="sudo killall -HUP mDNSResponder;sudo killall mDNSResponderHelper
 
 alias weather="curl https://wttr.in/riga\?FQ"
 
-alias bubu="brew update && brew upgrade"
+alias bubu="brew update && brew upgrade && brew cleanup"
