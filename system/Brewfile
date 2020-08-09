@@ -17,6 +17,8 @@ brew "git"
 brew "gnupg", link: false
 # Improved top (interactive process viewer)
 brew "htop"
+# User-friendly cURL replacement (command-line HTTP client)
+brew "httpie"
 # Mac App Store command-line interface
 brew "mas"
 # Port scanning utility for large networks
