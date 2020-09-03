@@ -1,4 +1,4 @@
-setup: dotfiles-setup macos-setup tooling-setup brew-setup
+setup: dotfiles-setup macos-setup tooling-setup
 
 dotfiles-setup:
 	rm ~/.gitconfig
@@ -24,30 +24,22 @@ tooling-setup:
 	curl --proto '=https' --tlsv1.2 -fsS https://sh.rustup.rs | sh
 	curl --proto '=https' --tlsv1.2 -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh | sh
 
-brew-setup:
 	brew bundle --file=$(PWD)/system/Brewfile
+	ln -s /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport /usr/local/bin/airport
 
 
-
-update: software-update brew-update npm-update
-
-software-update:
+update:
 	# Update App Store apps
 	sudo softwareupdate -i -a
 
-brew-update:
 	# Update Homebrew (Cask) & packages
 	brew update
 	brew upgrade
 
-npm-update:
 	# Update npm & packages
 	npm install npm -g
 	npm update -g
 
 
-
-backup: brew-backup
-
-brew-backup:
+backup:
 	brew bundle dump --file=$(PWD)/system/Brewfile --describe --force
