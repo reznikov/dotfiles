@@ -6,15 +6,12 @@ tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "homebrew/services"
 tap "reznikov/cardo-unofficial"
-tap "reznikov/sshpass"
 # Automate deployment, configuration, and upgrading
 brew "ansible"
 # Tool for exploring each layer in a docker image
 brew "dive"
 # Distributed revision control system
 brew "git"
-# GNU Pretty Good Privacy (PGP) package
-brew "gnupg", link: false
 # Improved top (interactive process viewer)
 brew "htop"
 # User-friendly cURL replacement (command-line HTTP client)
@@ -25,6 +22,8 @@ brew "mas"
 brew "nmap"
 # Platform built on V8 to build network applications
 brew "node"
+# SSL/TLS VPN implementing OSI layer 2 or 3 secure network extension
+brew "openvpn"
 # Tool for creating identical machine images for multiple platforms
 brew "packer"
 # Simplified and community-driven man pages
@@ -57,6 +56,7 @@ cask "vagrant"
 cask "vagrant-manager"
 cask "virtualbox"
 cask "visual-studio-code"
+cask "wifi-explorer"
 cask "wireshark"
 mas "feedly", id: 865500966
 mas "Keynote", id: 409183694
