@@ -27,6 +27,9 @@ tooling-setup:
 	brew bundle --file=$(PWD)/system/Brewfile
 	ln -s /System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport /usr/local/bin/airport
 
+	echo "/usr/local/bin/zsh" | sudo tee -a /etc/shells
+	chsh -s /usr/local/bin/zsh
+
 
 update:
 	# Update App Store apps

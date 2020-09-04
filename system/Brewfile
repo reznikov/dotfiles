@@ -30,6 +30,10 @@ brew "packer"
 brew "tldr"
 # Internet file retriever
 brew "wget"
+# UNIX shell (command interpreter)
+brew "zsh"
+# Fish-like fast/unobtrusive autosuggestions for zsh
+brew "zsh-autosuggestions"
 cask "1password"
 cask "autodesk-fusion360"
 cask "bartender"
