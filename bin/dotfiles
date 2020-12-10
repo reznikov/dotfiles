@@ -1,0 +1,24 @@
+#!/bin/zsh
+
+cd "$(dirname "$0")/.."
+
+install() {
+  link_dotfiles
+}
+
+link_dotfiles() {
+	rm ~/.gitconfig
+	ln -s $(pwd)/gitconfig ~/.gitconfig
+
+	rm ~/.zshrc
+	ln -s $(pwd)/zshrc ~/.zshrc
+}
+
+
+if [[ $1 == "install" ]]; then
+  (install)
+elif [[ $1 == "edit" ]]; then
+  $EDITOR ~/.dotfiles
+else
+  echo "Usage: dotfiles [install|edit]"
+fi

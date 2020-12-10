@@ -1,17 +1,29 @@
 [user]
 	name = Alexey Reznikov
 	email = alexey@reznikov.eu
+
 [core]
+    whitespace = warn,space-before-tab,trailing-space
 	eol = lf
 	editor = code --wait
+
 [commit]
 	gpgsign = true
+
 [alias]
 	st = status -s
 	ci = commit
 	graph = log --graph --decorate --stat --date=iso --all
 	overview = log --oneline --no-merges
+
 [log]
 	date = iso
+
 [github]
 	user = reznikov
+
+[pull]
+	rebase = true
+
+[rebase]
+	autoStash = true
