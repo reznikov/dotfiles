@@ -5,7 +5,12 @@
 [core]
     whitespace = warn,space-before-tab,trailing-space
 	eol = lf
+	autocrlf = input
 	editor = code --wait
+	symlinks = false
+	trustctime = false # https://stackoverflow.com/questions/15136590
+	precomposeunicode = false # http://michael-kuehnel.de/git/2014/11/21/git-mac-osx-and-german-umlaute.html
+	pager = delta | less -RFX
 
 [commit]
 	gpgsign = true
@@ -15,6 +20,7 @@
 	ci = commit
 	graph = log --graph --decorate --stat --date=iso --all
 	overview = log --oneline --no-merges
+    fp = fetch --prune
 
 [log]
 	date = iso
@@ -27,3 +33,14 @@
 
 [rebase]
 	autoStash = true
+
+[diff]
+  # Detect copies as well as renames
+  renames = copies
+
+[delta]
+  light = true
+  navigate = true
+  syntax-theme = github
+  line-numbers = true
+  side-by-side = true

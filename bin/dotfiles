@@ -3,17 +3,18 @@
 cd "$(dirname "$0")/.."
 
 install() {
-  link_dotfiles
+  for dotfile in gitconfig Brewfile
+  do
+    [ -s ~/.$dotfile ] && rm ~/.$dotfile
+    ln -s $(pwd)/$dotfile ~/.$dotfile
+  done
+
+  for dotfile in zshrc zprofile
+  do
+    [ -s ~/.$dotfile ] && rm ~/.$dotfile
+    ln -s $(pwd)/$dotfile.zsh ~/.$dotfile
+  done
 }
-
-link_dotfiles() {
-	rm ~/.gitconfig
-	ln -s $(pwd)/gitconfig ~/.gitconfig
-
-	rm ~/.zshrc
-	ln -s $(pwd)/zshrc ~/.zshrc
-}
-
 
 if [[ $1 == "install" ]]; then
   (install)
