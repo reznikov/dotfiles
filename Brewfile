@@ -36,6 +36,8 @@ brew "httpie"
 brew "jq"
 # Use Realtek DVB-T dongles as a cheap SDR
 brew "librtlsdr"
+# Keep your Mac's application settings in sync
+brew "mackup"
 # Mac App Store command-line interface
 brew "mas"
 # Simple tool to make locally trusted development certificates
@@ -72,6 +74,8 @@ brew "zsh"
 cask "1password"
 # Command-line helper for the 1Password password manager
 cask "1password-cli"
+# Application launcher and productivity software
+cask "alfred"
 cask "autodesk-fusion360"
 # Menu bar icon organizer
 cask "bartender"
@@ -149,6 +153,7 @@ cask "wireshark"
 cask "yubico-yubikey-manager"
 # YubiKey tool
 cask "yubico-yubikey-personalization-gui"
+mas "DuckDuckGo Privacy Essentials", id: 1482920575
 mas "feedly", id: 865500966
 mas "Keynote", id: 409183694
 mas "Magnet", id: 441258766
