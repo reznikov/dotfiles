@@ -1,0 +1,33 @@
+#!/bin/zsh
+#
+# Export shell environment context for AI tools.
+# Usage: shellenv
+#
+
+echo "# Shell Environment"
+echo "- OS: $(sw_vers -productName) $(sw_vers -productVersion) ($(uname -m))"
+echo "- Shell: $SHELL ($ZSH_VERSION)"
+echo "- Terminal: ${TERM_PROGRAM:-unknown} (TERM=$TERM)"
+echo "- User: $USER @ $(hostname -s)"
+echo "- CWD: $PWD"
+echo ""
+
+echo "## Key Paths"
+echo "- DOTFILES: ~/dotfiles"
+echo "- DOTFILES_LOCAL: $DOTFILES_LOCAL"
+echo "- BREW_PREFIX: $BREW_PREFIX"
+echo "- XDG_CONFIG_HOME: $XDG_CONFIG_HOME"
+echo ""
+
+echo "## Tools"
+for cmd in node npm git gh brew fnm fzf fd rg bat eza zoxide starship tmux claude az; do
+  if command -v $cmd &>/dev/null; then
+    local ver=$($cmd --version 2>/dev/null | head -1)
+    echo "- $cmd: $ver"
+  fi
+done
+echo ""
+
+echo "## Aliases"
+alias | sed 's/^/- /'
+echo ""

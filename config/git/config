@@ -1,0 +1,82 @@
+[core]
+	whitespace = warn,space-before-tab,trailing-space
+	editor = $EDITOR --wait
+	autocrlf = input
+	eol = lf
+
+	# make `git rebase` safer on MacOS
+	# * https://www.git-tower.com/blog/make-git-rebase-safe-on-osx
+	trustctime = false
+	useBuiltInFSMonitor = false
+
+[init]
+	defaultBranch = main
+
+[color]
+	ui = auto
+
+[alias]
+	st = status -s
+	ci = commit
+	cim = commit -m
+	ac = commit --all -m
+	cp = cherry-pick
+	co = checkout
+	unstage = reset HEAD --
+
+[status]
+	branch = true
+
+[log]
+	date = iso
+
+[fetch]
+	prune = true
+
+[pull]
+	rebase = true
+
+[push]
+	autoSetupRemote = true
+
+[rebase]
+	autoStash = true
+
+[diff]
+	algorithm = histogram
+
+[difftool]
+	prompt = false
+
+[difftool "vscode"]
+	cmd = code --wait --diff $LOCAL $REMOTE
+
+[difftool "webstorm"]
+	cmd = test -s $LOCAL && webstorm diff $LOCAL $REMOTE --wait || webstorm diff $LOCAL --wait
+	trustExitCode = true
+
+[merge]
+	conflictstyle = zdiff3
+
+[mergetool "vscode"]
+	cmd = code --wait $MERGED
+
+[mergetool "webstorm"]
+	cmd = webstorm merge $LOCAL $REMOTE $BASE $MERGED --wait
+	trustExitCode = true
+
+[rerere]
+	enabled = true
+
+[maintenance]
+	auto = true
+	strategy = incremental
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[include]
+	path = ~/.config/git/config.local

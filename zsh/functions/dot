@@ -1,0 +1,302 @@
+#!/bin/zsh
+#
+# dot — dotfiles management CLI
+# Usage: dot <command> [args]
+#
+
+local DOTFILES="${DOTFILES:-$HOME/dotfiles}"
+local DOTFILES_LOCAL="${DOTFILES_LOCAL:-$HOME/dotfiles.local}"
+
+# Output helpers
+_dot_header()  { print -P "\n%F{blue}==>%f %B$1%b" }
+_dot_ok()      { print -P "  %F{green}✓%f $1" }
+_dot_fail()    { print -P "  %F{red}✗%f $1" }
+_dot_info()    { print -P "  %F{cyan}·%f $1" }
+_dot_done()    { print -P "\n%F{green}✓ Done%f" }
+
+_dot_help() {
+  print -P "%F{blue}dot%f — dotfiles management CLI\n"
+  print -P "Usage: %Bdot <command>%b\n"
+  print -P "Commands:"
+  print -P "  %F{green}update%f     Update system (brew, fnm, gh extensions)"
+  print -P "  %F{green}edit%f       Open dotfiles in \$EDITOR"
+  print -P "  %F{green}doctor%f     Check dotfiles health"
+  print -P "  %F{green}clean%f      Clear caches (brew, bat, npm)"
+  print -P "  %F{green}link%f       Create/update symlinks"
+  print -P "  %F{green}unlink%f     Remove all symlinks"
+  print -P "  %F{green}brew%f       Install Homebrew packages"
+  print -P "  %F{green}macos%f      Apply macOS system defaults"
+  print -P "  %F{green}reload%f     Reload shell config"
+  print -P "  %F{green}cd%f         cd into dotfiles directory"
+  print -P "  %F{green}help%f       Show this help"
+}
+
+_dot_update() {
+  _dot_header "Updating Homebrew"
+  brew update
+  brew upgrade --greedy
+  brew cleanup
+
+  _dot_header "Syncing Brewfile"
+  brew bundle dump --file="$DOTFILES_LOCAL/Brewfile" --force
+
+  if command -v fnm &>/dev/null; then
+    _dot_header "Updating Node.js (fnm)"
+    fnm install --lts
+  fi
+
+  if command -v gh &>/dev/null; then
+    _dot_header "Updating gh extensions"
+    gh extension upgrade --all 2>/dev/null
+  fi
+
+  _dot_done
+}
+
+_dot_edit() {
+  ${EDITOR:-code} "$DOTFILES"
+}
+
+_dot_doctor() {
+  local ok=true
+
+  _dot_header "Symlinks"
+  local -A links=(
+    "$HOME/.zshenv"                "$DOTFILES/zsh/env.zsh"
+    "$HOME/.zshrc"                 "$DOTFILES/zsh/rc.zsh"
+    "$HOME/.zprofile"              "$DOTFILES/zsh/profile.zsh"
+    "$HOME/.zlogin"                "$DOTFILES/zsh/login.zsh"
+    "$HOME/.rgignore"              "$DOTFILES/config/fd/ignore"
+    "$HOME/.config/git/config"     "$DOTFILES/config/git/config"
+    "$HOME/.config/tmux/tmux.conf" "$DOTFILES/config/tmux/tmux.conf"
+    "$HOME/.config/ghostty/config" "$DOTFILES/config/ghostty/config"
+    "$HOME/.config/bat/config"     "$DOTFILES/config/bat/config"
+    "$HOME/.config/fd/ignore"      "$DOTFILES/config/fd/ignore"
+    "$HOME/.config/starship.toml"  "$DOTFILES/config/starship/starship.toml"
+  )
+
+  for dst target in "${(@kv)links}"; do
+    if [[ -L "$dst" ]]; then
+      local actual=$(readlink "$dst")
+      if [[ "$actual" == "$target" ]]; then
+        _dot_ok "${dst/$HOME/~}"
+      else
+        _dot_fail "${dst/$HOME/~} → $actual (expected $target)"
+        ok=false
+      fi
+    elif [[ -e "$dst" ]]; then
+      _dot_fail "${dst/$HOME/~} exists but is not a symlink"
+      ok=false
+    else
+      _dot_fail "${dst/$HOME/~} missing"
+      ok=false
+    fi
+  done
+
+  _dot_header "Tools"
+  for cmd in bat eza fd fzf git gh rg starship zoxide fnm; do
+    if command -v $cmd &>/dev/null; then
+      _dot_ok "$cmd"
+    else
+      _dot_fail "$cmd not found"
+      ok=false
+    fi
+  done
+
+  _dot_header "Directories"
+  for dir in "$DOTFILES" "$DOTFILES_LOCAL" "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_STATE_HOME" "$XDG_DATA_HOME"; do
+    if [[ -d "$dir" ]]; then
+      _dot_ok "${dir/$HOME/~}"
+    else
+      _dot_fail "${dir/$HOME/~} missing"
+      ok=false
+    fi
+  done
+
+  _dot_header "Environment"
+  for var in DOTFILES DOTFILES_LOCAL XDG_CONFIG_HOME XDG_CACHE_HOME XDG_STATE_HOME XDG_DATA_HOME MACHINE; do
+    if [[ -n "${(P)var}" ]]; then
+      _dot_ok "\$$var = ${(P)var/$HOME/~}"
+    else
+      _dot_fail "\$$var not set"
+      ok=false
+    fi
+  done
+
+  echo ""
+  if $ok; then
+    print -P "%F{green}✓ All checks passed%f"
+  else
+    print -P "%F{red}✗ Some checks failed%f"
+    return 1
+  fi
+}
+
+_dot_clean() {
+  _dot_header "Cleaning brew cache"
+  brew cleanup --prune=0 2>/dev/null
+
+  _dot_header "Cleaning npm cache"
+  npm cache clean --force 2>/dev/null
+
+  _dot_header "Clearing bat cache"
+  bat cache --clear 2>/dev/null
+
+  _dot_header "Clearing zsh caches"
+  rm -f "$XDG_CACHE_HOME"/zoxide-init.zsh
+  rm -f "$XDG_CACHE_HOME"/brew-shellenv.zsh
+  rm -f "$XDG_CACHE_HOME"/starship-init.zsh
+  rm -f "$XDG_CACHE_HOME"/vscode-shell-integration.zsh
+  rm -f "$XDG_CACHE_HOME"/zcompdump
+  rm -f "$XDG_CACHE_HOME"/zcompdump.zwc
+
+  _dot_done
+  _dot_info "Caches will regenerate on next shell startup"
+}
+
+_dot_link() {
+  _dot_header "Creating directories"
+  mkdir -p "$HOME/.cache"
+  mkdir -p "$HOME/.local/share"
+  mkdir -p "$HOME/.local/state"
+  mkdir -p "$HOME/.local/bin"
+  mkdir -p "$DOTFILES_LOCAL/zsh/functions"
+  mkdir -p "$DOTFILES_LOCAL/config/git"
+  mkdir -p "$DOTFILES_LOCAL/config/fd"
+  mkdir -p "$HOME/.config/ghostty"
+  mkdir -p "$HOME/.config/bat"
+  mkdir -p "$HOME/.config/fd"
+  mkdir -p "$HOME/.config/git"
+  mkdir -p "$HOME/.config/tmux"
+  mkdir -p "$HOME/.config/npm"
+
+  _dot_header "Linking dotfiles"
+  # Shell
+  ln -sfn "$DOTFILES/zsh/env.zsh"     "$HOME/.zshenv"      && _dot_ok ".zshenv"
+  ln -sfn "$DOTFILES/zsh/rc.zsh"      "$HOME/.zshrc"       && _dot_ok ".zshrc"
+  ln -sfn "$DOTFILES/zsh/profile.zsh" "$HOME/.zprofile"     && _dot_ok ".zprofile"
+  ln -sfn "$DOTFILES/zsh/login.zsh"   "$HOME/.zlogin"       && _dot_ok ".zlogin"
+
+  # Git (XDG native path)
+  ln -sfn "$DOTFILES/config/git/config" "$HOME/.config/git/config" && _dot_ok "git/config"
+  [[ -f "$DOTFILES_LOCAL/config/git/config" ]] && \
+    ln -sfn "$DOTFILES_LOCAL/config/git/config" "$HOME/.config/git/config.local" && _dot_ok "git/config.local"
+
+  # App configs
+  ln -sfn "$DOTFILES/config/starship/starship.toml" "$HOME/.config/starship.toml"  && _dot_ok "starship.toml"
+  ln -sfn "$DOTFILES/config/ghostty/config"         "$HOME/.config/ghostty/config" && _dot_ok "ghostty/config"
+  ln -sfn "$DOTFILES/config/bat/config"             "$HOME/.config/bat/config"     && _dot_ok "bat/config"
+  ln -sfn "$DOTFILES/config/tmux/tmux.conf"         "$HOME/.config/tmux/tmux.conf" && _dot_ok "tmux/tmux.conf"
+
+  # fd/rg ignore: merge shared + local
+  cat "$DOTFILES/config/fd/ignore" > "$HOME/.config/fd/ignore"
+  [[ -f "$DOTFILES_LOCAL/config/fd/ignore" ]] && cat "$DOTFILES_LOCAL/config/fd/ignore" >> "$HOME/.config/fd/ignore"
+  cp "$HOME/.config/fd/ignore" "$HOME/.rgignore"
+  _dot_ok "fd/ignore + .rgignore"
+
+  _dot_done
+}
+
+_dot_brew() {
+  _dot_header "Installing Homebrew packages"
+  if [[ "$IS_MACOS" == "true" ]]; then
+    brew bundle --file="$DOTFILES/Brewfile" --no-lock
+    _dot_done
+  else
+    _dot_info "Homebrew not configured for this OS — skipping"
+  fi
+}
+
+_dot_unlink() {
+  _dot_header "Removing symlinks"
+  rm -f "$HOME/.zshenv" "$HOME/.zshrc" "$HOME/.zprofile" "$HOME/.zlogin"
+  rm -f "$HOME/.rgignore"
+  rm -f "$HOME/.config/starship.toml" "$HOME/.config/ghostty/config"
+  rm -f "$HOME/.config/bat/config" "$HOME/.config/fd/ignore"
+  rm -f "$HOME/.config/git/config" "$HOME/.config/git/config.local"
+  rm -f "$HOME/.config/tmux/tmux.conf"
+  _dot_done
+}
+
+_dot_macos() {
+  if [[ "$IS_MACOS" != "true" ]]; then
+    _dot_info "Not macOS — skipping"
+    return
+  fi
+
+  _dot_header "Finder"
+  defaults write com.apple.finder AppleShowAllFiles -bool true
+  _dot_ok "Show hidden files"
+  defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+  _dot_ok "Show all file extensions"
+  defaults write com.apple.finder ShowPathbar -bool true
+  _dot_ok "Show path bar"
+  defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+  _dot_ok "Search current folder by default"
+  defaults write com.apple.finder ShowStatusBar -bool true
+  _dot_ok "Show status bar"
+  defaults write com.apple.finder QuitMenuItem -bool true
+  _dot_ok "Allow quitting Finder via ⌘Q"
+  chflags nohidden ~/Library
+  _dot_ok "Show ~/Library folder"
+
+  _dot_header "Dock"
+  defaults write com.apple.dock autohide -bool true
+  _dot_ok "Auto-hide Dock"
+  defaults write com.apple.dock mineffect -string "scale"
+  _dot_ok "Scale minimize animation"
+
+  _dot_header "Screenshots"
+  mkdir -p "$HOME/Screenshots"
+  defaults write com.apple.screencapture location -string "$HOME/Screenshots"
+  _dot_ok "Save to ~/Screenshots"
+  defaults write com.apple.screencapture disable-shadow -bool true
+  _dot_ok "Disable shadow"
+  defaults write com.apple.screencapture type -string "png"
+  _dot_ok "Format PNG"
+
+  _dot_header "System"
+  defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+  _dot_ok "Disable .DS_Store on network volumes"
+  defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+  _dot_ok "Disable .DS_Store on USB volumes"
+
+  _dot_header "Media"
+  launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist 2>/dev/null
+  _dot_ok "Prevent iTunes/Music from responding to media keys"
+
+  _dot_header "Applying changes"
+  killall Finder 2>/dev/null
+  killall Dock 2>/dev/null
+  killall SystemUIServer 2>/dev/null
+
+  _dot_done
+  _dot_info "Some changes may require a logout to take effect"
+}
+
+_dot_reload() {
+  exec zsh
+}
+
+_dot_cd() {
+  cd "$DOTFILES"
+}
+
+case "${1:-help}" in
+  update)  _dot_update ;;
+  edit)    _dot_edit ;;
+  doctor)  _dot_doctor ;;
+  clean)   _dot_clean ;;
+  link)    _dot_link ;;
+  unlink)  _dot_unlink ;;
+  brew)    _dot_brew ;;
+  macos)   _dot_macos ;;
+  reload)  _dot_reload ;;
+  cd)      _dot_cd ;;
+  help|-h|--help) _dot_help ;;
+  *)
+    print -P "%F{red}Unknown command:%f $1" >&2
+    _dot_help >&2
+    return 1
+    ;;
+esac

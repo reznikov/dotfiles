@@ -1,0 +1,26 @@
+# Version control
+.git
+
+# macOS
+.DS_Store
+.Trash
+Library/
+
+# Caches & build artifacts
+.cache
+.next
+.turbo
+__pycache__
+*.pyc
+node_modules
+dist
+build
+coverage
+
+# Package managers
+.yarn
+.npm
+
+# Tools (runtime data)
+.docker
+.vscode/extensions
