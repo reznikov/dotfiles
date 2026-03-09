@@ -2,11 +2,6 @@ font-family = "JetBrainsMono NF"
 font-size = 14
 theme = light:"Catppuccin Latte",dark:"Catppuccin Mocha"
 
-cursor-style = bar
-mouse-hide-while-typing = true
-copy-on-select = true
-scrollback-limit = 50000
-
 window-padding-x = 4
 window-padding-y = 2
 window-padding-balance = true
@@ -15,7 +10,6 @@ confirm-close-surface = false
 
 macos-option-as-alt = true
 macos-titlebar-style = tabs
-
 
 quick-terminal-position = top
 shell-integration = detect

@@ -20,7 +20,7 @@ echo "- XDG_CONFIG_HOME: $XDG_CONFIG_HOME"
 echo ""
 
 echo "## Tools"
-for cmd in node npm git gh brew fnm fzf fd rg bat eza zoxide starship tmux claude az; do
+for cmd in node npm git gh brew fnm fzf fd rg bat eza zoxide starship tmux claude az uv; do
   if command -v $cmd &>/dev/null; then
     local ver=$($cmd --version 2>/dev/null | head -1)
     echo "- $cmd: $ver"

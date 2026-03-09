@@ -208,24 +208,31 @@ fi
 # ALIASES
 #==============================================================================
 
-alias ls="eza" # modern ls
-alias ll="eza -lh --git" # list files with git status
-alias la="eza -lah --git" # list all files with git status
-alias lt="eza --tree --level=2" # tree view
+# File listing (eza)
+alias ls="eza"
+alias ll="eza -lh --git"
+alias la="eza -lah --git"
+alias lt="eza --tree --level=2"
 
-alias cat="bat --paging=never" # syntax-highlighted cat
+# Modern replacements
+alias cat="bat --paging=never"
 
-alias -s {json,js,ts,html}="$EDITOR" # open files with default editor
-
+# Shorthand
 alias d="docker"
 alias g="git"
+
+# Suffix aliases — open by extension
+alias -s {json,js,ts,html}="$EDITOR"
+
+# Sandboxed commands
+safe()   { safehouse "$@"; }
+# claude() { safe claude --dangerously-skip-permissions "$@"; }
 
 #==============================================================================
 # AUTOLOADED FUNCTIONS
 #==============================================================================
 
-fpath=("$DOTFILES/zsh/functions" $fpath)
-autoload -Uz flushdns shellenv dot
+autoload -Uz dot
 
 #==============================================================================
 # LOCAL CUSTOMIZATIONS

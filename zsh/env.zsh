@@ -29,6 +29,8 @@ fi
 export DOTFILES="$HOME/dotfiles"
 export DOTFILES_LOCAL="$HOME/dotfiles.local"
 
+export PATH="$DOTFILES/bin:$PATH"
+
 export HOMEBREW_BREWFILE="$DOTFILES_LOCAL/Brewfile"
 export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_INSECURE_REDIRECT=1
@@ -37,6 +39,13 @@ export HOMEBREW_NO_INSECURE_REDIRECT=1
 export LESSHISTFILE="$XDG_STATE_HOME/lesshst"
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
+
+#==============================================================================
+# AUTOLOADED FUNCTIONS (available without login shell)
+#==============================================================================
+
+fpath=("$DOTFILES/zsh/functions" $fpath)
+autoload -Uz flushdns shellenv
 
 #==============================================================================
 # LOCAL OVERRIDES
